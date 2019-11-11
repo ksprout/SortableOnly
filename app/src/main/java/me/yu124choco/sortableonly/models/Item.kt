@@ -2,7 +2,7 @@ package me.yu124choco.sortableonly.models
 
 import androidx.room.*
 
-@Entity
+@Entity(tableName = "items")
 data class Item(
     @PrimaryKey(autoGenerate = true) val id: Int?,
     @ColumnInfo(name = "name") val name: String?,
@@ -11,7 +11,7 @@ data class Item(
 
 @Dao
 interface ItemDao {
-    @Query("SELECT * FROM item")
+    @Query("SELECT * FROM items")
     fun getAll(): List<Item>
 
     @Insert
