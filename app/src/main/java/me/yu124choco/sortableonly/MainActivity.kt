@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     private val RESULT_ITEM_CREATE = 1000
 
+    private var itemsListFragment: ItemsListFragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,11 +44,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateItemsList() {
         val ft = supportFragmentManager.beginTransaction()
-        val fragment = ItemsListFragment()
         val bundle = Bundle()
         bundle.putString("order_rule", ItemsListFragment.ORDER_BY_CUSTOM)
-        fragment.arguments = bundle
-        ft.replace(R.id.layout_inner, fragment).commit()
+        if (itemsListFragment == null) {
+            itemsListFragment = ItemsListFragment()
+            itemsListFragment?.arguments = bundle
+            ft.replace(R.id.layout_inner, itemsListFragment!!).commit()
+        } else {
+            itemsListFragment?.displayList(this)
+        }
     }
 
     private fun setupClickListeners() {

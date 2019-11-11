@@ -49,7 +49,7 @@ class ItemsListFragment : Fragment() {
     /**
      * アイテム一覧のリストを表示する
      */
-    private fun displayList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
+    fun displayList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
         val items = GlobalScope.async {
             val db = AppDatabase.getDatabase(activity)
             return@async db.itemDao().getAll()
@@ -58,6 +58,6 @@ class ItemsListFragment : Fragment() {
         val adapter = ItemsListAdapter(activity, items) {pos ->
 
         }
-        list_view_items.adapter = adapter
+        list_view_items?.adapter = adapter
     }
 }
