@@ -83,6 +83,10 @@ class MainActivity : AppCompatActivity() {
             }
             return@setOnTouchListener false
         }
+
+        button_delete.setOnClickListener {
+            
+        }
     }
 
     private fun insertTest() = GlobalScope.launch(Dispatchers.Main) {
