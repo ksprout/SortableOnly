@@ -4,9 +4,9 @@ import androidx.room.*
 
 @Entity(tableName = "items")
 data class Item(
-    @PrimaryKey(autoGenerate = true) val id: Int?,
-    @ColumnInfo(name = "name") val name: String?,
-    @ColumnInfo(name = "description") val description: String?
+    @PrimaryKey(autoGenerate = true) var id: Int?,
+    @ColumnInfo(name = "name") var name: String?,
+    @ColumnInfo(name = "description") var description: String?
 )
 
 @Dao

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        readTest()
+        //readTest()
         //insertTest()
         updateItemsList()
     }
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private fun insertTest() = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@MainActivity)
-            return@async db.itemDao().insertAll(listOf(Item(null, "アイテム1", "本文")))
+            return@async db.itemDao().insertAll(List(5) { i -> Item(null, "アイテム$i", "本文") })
         }.await()
     }
 
