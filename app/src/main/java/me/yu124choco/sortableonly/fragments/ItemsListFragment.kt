@@ -54,7 +54,10 @@ class ItemsListFragment : Fragment() {
             val db = AppDatabase.getDatabase(activity)
             return@async db.itemDao().getAll()
         }.await().toMutableList()
-        val adapter = ItemsListAdapter(activity, items)
+
+        val adapter = ItemsListAdapter(activity, items) {pos ->
+
+        }
         list_view_items.adapter = adapter
     }
 }
