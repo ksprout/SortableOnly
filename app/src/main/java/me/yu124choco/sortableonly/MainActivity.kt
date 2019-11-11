@@ -3,6 +3,8 @@ package me.yu124choco.sortableonly
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.MotionEvent
+import android.view.animation.TranslateAnimation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import me.yu124choco.sortableonly.database.AppDatabase
@@ -29,8 +31,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        image_view_button_add_item.setOnClickListener {
-            makeShortToast(this, "アイテムを追加")
+        button_add_item.setOnClickListener {
+
+        }
+
+        // ホバーアニメーションを設定
+        button_add_item.setOnTouchListener { v, event ->
+            val delta = 4 * resources.displayMetrics.density
+            val duration = 200L
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    val anim = TranslateAnimation(0f, 0f, 0f, delta)
+                    anim.duration = duration
+                    anim.fillAfter = true
+                    button_add_item.startAnimation(anim)
+                }
+                MotionEvent.ACTION_UP -> {
+                    val anim = TranslateAnimation(0f, 0f, delta, 0f)
+                    anim.duration = duration
+                    anim.fillAfter = true
+                    button_add_item.startAnimation(anim)
+                }
+            }
+            return@setOnTouchListener false
         }
     }
 

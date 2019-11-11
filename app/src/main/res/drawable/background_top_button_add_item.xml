@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
+トップ画面のアイテム追加ボタンの背景
+-->
+<ripple
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:color="#aaf">
     <item>
         <shape android:shape="oval">
             <corners android:radius="@dimen/top_button_add_item_half" />
-            <solid android:color="#44f" />
+            <solid android:color="#44f"/>
         </shape>
     </item>
-</selector>
+</ripple>

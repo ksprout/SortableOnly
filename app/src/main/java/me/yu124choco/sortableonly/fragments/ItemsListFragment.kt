@@ -46,6 +46,9 @@ class ItemsListFragment : Fragment() {
         if (activity != null) displayList(activity!!)
     }
 
+    /**
+     * アイテム一覧のリストを表示する
+     */
     private fun displayList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
         val items = GlobalScope.async {
             val db = AppDatabase.getDatabase(activity)
@@ -53,9 +56,5 @@ class ItemsListFragment : Fragment() {
         }.await().toMutableList()
         val adapter = ItemsListAdapter(activity, items)
         list_view_items.adapter = adapter
-        Handler().postDelayed({
-            items.add(Item(null, "アイテムカスタム", "本文"))
-            adapter.notifyDataSetChanged()
-        }, 3000)
     }
 }
