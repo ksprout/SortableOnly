@@ -28,10 +28,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
+        if (data != null && resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 RESULT_ITEM_CREATE -> {
-                    
+                    if (data.getBooleanExtra("item_saved", false)) {
+                        updateItemsList()
+                        makeShortToast(this, "アイテムが追加されました")
+                    }
                 }
             }
         }
