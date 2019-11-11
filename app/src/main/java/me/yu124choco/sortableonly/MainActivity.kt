@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         button_delete.setOnClickListener {
-            
+            itemsListFragment?.deleteTargetItems(this)
         }
     }
 

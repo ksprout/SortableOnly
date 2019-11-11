@@ -29,6 +29,7 @@ class ItemsListFragment : Fragment() {
     }
 
     private var orderRule = ORDER_BY_CUSTOM
+    private var itemsListAdapter: ItemsListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +56,20 @@ class ItemsListFragment : Fragment() {
             return@async db.itemDao().getAll()
         }.await().toMutableList()
 
-        val adapter = ItemsListAdapter(activity, items) {pos ->
+        itemsListAdapter = ItemsListAdapter(activity, items) {pos ->
 
         }
-        list_view_items?.adapter = adapter
+        list_view_items?.adapter = itemsListAdapter
+    }
+
+    fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
+        if (itemsListAdapter != null) {
+            val targets = itemsListAdapter!!.checkedItems
+            GlobalScope.async {
+                val db = AppDatabase.getDatabase(activity)
+                return@async db.itemDao().deleteAll(targets.toList())
+            }.await()
+            displayList(activity)
+        }
     }
 }
