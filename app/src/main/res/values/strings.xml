@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SortableOnly</string>
+    <string name="top_button_add_item_description">アイテムを追加するボタンの画像</string>
 </resources>

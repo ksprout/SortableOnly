@@ -3,6 +3,7 @@ package me.yu124choco.sortableonly
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import me.yu124choco.sortableonly.database.AppDatabase
 import me.yu124choco.sortableonly.fragments.ItemsListFragment
@@ -14,8 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //readTest()
-        //insertTest()
+        setupClickListeners()
         updateItemsList()
     }
 
@@ -25,7 +25,13 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putString("order_rule", ItemsListFragment.ORDER_BY_CUSTOM)
         fragment.arguments = bundle
-        ft.replace(R.id.layout_main, fragment).commit()
+        ft.replace(R.id.layout_inner, fragment).commit()
+    }
+
+    private fun setupClickListeners() {
+        image_view_button_add_item.setOnClickListener {
+            makeShortToast(this, "アイテムを追加")
+        }
     }
 
     private fun insertTest() = GlobalScope.launch(Dispatchers.Main) {

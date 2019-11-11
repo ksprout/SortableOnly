@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <corners android:radius="@dimen/top_button_add_item_half" />
+            <solid android:color="#44f" />
+        </shape>
+    </item>
+</selector>
