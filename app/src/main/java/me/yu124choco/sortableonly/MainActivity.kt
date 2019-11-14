@@ -49,8 +49,16 @@ class MainActivity : AppCompatActivity() {
         bundle.putString("order_rule", ItemsListFragment.ORDER_BY_CUSTOM)
         if (itemsListFragment == null) {
             itemsListFragment = ItemsListFragment()
-            itemsListFragment?.onItemsListElemClickListener = {item ->
+            itemsListFragment?.onItemsListElemClickListener = { item ->
                 val dialog = ItemShowDialogFragment()
+                dialog.item = item
+                dialog.editButtonClickListener = { i ->
+
+                }
+                dialog.deleteButtonClickListener = { i ->
+                    dialog.dismiss()
+                    itemsListFragment?.deleteItem(this, i)
+                }
                 dialog.show(supportFragmentManager, "item_show_dialog")
             }
             itemsListFragment?.arguments = bundle

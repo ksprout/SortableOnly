@@ -73,4 +73,12 @@ class ItemsListFragment : Fragment() {
             displayList(activity)
         }
     }
+
+    fun deleteItem(activity: Activity, item: Item) = GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.async {
+            val db = AppDatabase.getDatabase(activity)
+            return@async db.itemDao().deleteAll(listOf(item))
+        }.await()
+        displayList(activity)
+    }
 }
