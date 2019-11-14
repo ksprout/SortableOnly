@@ -30,6 +30,7 @@ class ItemsListFragment : Fragment() {
 
     private var orderRule = ORDER_BY_CUSTOM
     private var itemsListAdapter: ItemsListAdapter? = null
+    var onItemsListElemClickListener: ((item: Item) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +57,8 @@ class ItemsListFragment : Fragment() {
             return@async db.itemDao().getAll()
         }.await().toMutableList()
 
-        itemsListAdapter = ItemsListAdapter(activity, items) {pos ->
-
+        itemsListAdapter = ItemsListAdapter(activity, items) {item ->
+            if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
         }
         list_view_items?.adapter = itemsListAdapter
     }

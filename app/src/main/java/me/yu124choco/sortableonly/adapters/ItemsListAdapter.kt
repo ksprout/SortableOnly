@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import me.yu124choco.sortableonly.R
 import me.yu124choco.sortableonly.models.Item
 
-class ItemsListAdapter(private val context: Context, private val items: MutableList<Item>, private val onItemClickListener: ((pos: Int) -> Unit)) : BaseAdapter() {
+class ItemsListAdapter(private val context: Context, private val items: MutableList<Item>, private val onItemClickListener: ((item: Item) -> Unit)) : BaseAdapter() {
 
     private class ViewHolder {
         var itemContainer: ConstraintLayout? = null
@@ -36,7 +36,7 @@ class ItemsListAdapter(private val context: Context, private val items: MutableL
             holder = cv.tag as ViewHolder
         }
         holder.itemContainer?.setOnClickListener {
-            onItemClickListener.invoke(position)
+            onItemClickListener.invoke(items[position])
         }
         holder.checkBox?.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked && checkedItems.firstOrNull { it.id == items[position].id } == null) {

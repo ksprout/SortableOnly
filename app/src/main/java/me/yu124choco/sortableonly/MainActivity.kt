@@ -48,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         bundle.putString("order_rule", ItemsListFragment.ORDER_BY_CUSTOM)
         if (itemsListFragment == null) {
             itemsListFragment = ItemsListFragment()
+            itemsListFragment?.onItemsListElemClickListener = {item ->
+                makeShortToast(this, "${item.name}")
+            }
             itemsListFragment?.arguments = bundle
             ft.replace(R.id.layout_inner, itemsListFragment!!).commit()
         } else {
