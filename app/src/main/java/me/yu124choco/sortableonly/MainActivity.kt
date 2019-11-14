@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import me.yu124choco.sortableonly.activities.ItemCreateActivity
 import me.yu124choco.sortableonly.database.AppDatabase
+import me.yu124choco.sortableonly.fragments.ItemShowDialogFragment
 import me.yu124choco.sortableonly.fragments.ItemsListFragment
 import me.yu124choco.sortableonly.util.makeShortToast
 import me.yu124choco.sortableonly.models.Item
@@ -49,7 +50,8 @@ class MainActivity : AppCompatActivity() {
         if (itemsListFragment == null) {
             itemsListFragment = ItemsListFragment()
             itemsListFragment?.onItemsListElemClickListener = {item ->
-                makeShortToast(this, "${item.name}")
+                val dialog = ItemShowDialogFragment()
+                dialog.show(supportFragmentManager, "item_show_dialog")
             }
             itemsListFragment?.arguments = bundle
             ft.replace(R.id.layout_inner, itemsListFragment!!).commit()
