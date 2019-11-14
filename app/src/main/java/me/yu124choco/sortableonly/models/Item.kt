@@ -11,11 +11,17 @@ data class Item(
 
 @Dao
 interface ItemDao {
+    @Query("SELECT * FROM items WHERE id = :i")
+    fun get(i: Int): Item
+
     @Query("SELECT * FROM items")
     fun getAll(): List<Item>
 
     @Insert
     fun insertAll(items: List<Item>)
+
+    @Update
+    fun updateAll(items: List<Item>)
 
     @Delete
     fun deleteAll(items: List<Item>)

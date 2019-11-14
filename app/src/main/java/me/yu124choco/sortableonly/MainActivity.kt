@@ -34,9 +34,15 @@ class MainActivity : AppCompatActivity() {
         if (data != null && resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 RESULT_ITEM_CREATE -> {
-                    if (data.getBooleanExtra("item_saved", false)) {
-                        updateItemsList()
-                        makeShortToast(this, "アイテムが追加されました")
+                    when (data.getIntExtra("saved_status", 0)) {
+                        1 -> {
+                            updateItemsList()
+                            makeShortToast(this, "アイテムが追加されました")
+                        }
+                        2 -> {
+                            updateItemsList()
+                            makeShortToast(this, "アイテムが更新されました")
+                        }
                     }
                 }
             }
@@ -53,7 +59,10 @@ class MainActivity : AppCompatActivity() {
                 val dialog = ItemShowDialogFragment()
                 dialog.item = item
                 dialog.editButtonClickListener = { i ->
-
+                    dialog.dismiss()
+                    val intent = Intent(application, ItemCreateActivity::class.java)
+                    intent.putExtra("target_item_id", i.id)
+                    startActivityForResult(intent, RESULT_ITEM_CREATE)
                 }
                 dialog.deleteButtonClickListener = { i ->
                     dialog.dismiss()
@@ -72,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         button_add_item.setOnClickListener {
             Handler().postDelayed({
                 val intent = Intent(application, ItemCreateActivity::class.java)
+                intent.putExtra("target_item_id", -1)
                 startActivityForResult(intent, RESULT_ITEM_CREATE)
             }, 500)
         }
