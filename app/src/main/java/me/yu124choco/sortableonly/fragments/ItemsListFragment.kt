@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_items_list.*
@@ -62,6 +63,7 @@ class ItemsListFragment : Fragment() {
         itemsListAdapter = ItemsListAdapter(activity, items) {item ->
             if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
         }
+        list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         list_view_items?.adapter = itemsListAdapter
         list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
     }
