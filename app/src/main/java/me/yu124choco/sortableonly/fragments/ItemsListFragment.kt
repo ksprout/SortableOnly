@@ -68,7 +68,7 @@ class ItemsListFragment : Fragment() {
         list_view_items?.adapter = itemsListAdapter
         list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
             override fun onMove(
                 recyclerView: RecyclerView,
