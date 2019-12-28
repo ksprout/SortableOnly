@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_item_create.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -65,7 +63,7 @@ class ItemCreateActivity : AppCompatActivity() {
     private fun saveItem(name: String, description: String) = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@ItemCreateActivity)
-            return@async db.itemDao().insertAll(listOf(Item(null, name, description)))
+            return@async db.itemDao().insertAll(listOf(Item(null, name, description, 0)))
         }.await()
         backToHome()
     }

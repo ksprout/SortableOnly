@@ -6,7 +6,8 @@ import androidx.room.*
 data class Item(
     @PrimaryKey(autoGenerate = true) var id: Int?,
     @ColumnInfo(name = "name") var name: String?,
-    @ColumnInfo(name = "description") var description: String?
+    @ColumnInfo(name = "description") var description: String?,
+    @ColumnInfo(name = "order") var order: Int?
 )
 
 @Dao
