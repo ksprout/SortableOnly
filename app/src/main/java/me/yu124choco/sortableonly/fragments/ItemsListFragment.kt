@@ -77,8 +77,11 @@ class ItemsListFragment : Fragment() {
             ): Boolean {
                 val fromPosition = viewHolder.adapterPosition
                 val toPosition = target.adapterPosition
-                list_view_items?.adapter?.notifyItemMoved(fromPosition, toPosition)
-                return true
+                if (toPosition != fromPosition) {
+                    list_view_items?.adapter?.notifyItemMoved(fromPosition, toPosition)
+                    return true
+                }
+                return false
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
