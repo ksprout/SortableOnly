@@ -24,8 +24,8 @@ class ItemCreateActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_create)
 
-        val targetItemId = intent.getIntExtra("target_item_id", -1)
-        if (targetItemId != -1) {
+        val targetItemId = intent.getLongExtra("target_item_id", -1)
+        if (targetItemId != -1L) {
             isEdit = true
             showItem(targetItemId)
         }
@@ -46,7 +46,7 @@ class ItemCreateActivity : AppCompatActivity() {
         }
     }
 
-    private fun showItem(itemId: Int) = GlobalScope.launch(Dispatchers.Main) {
+    private fun showItem(itemId: Long) = GlobalScope.launch(Dispatchers.Main) {
         val item = GlobalScope.async {
             val db = AppDatabase.getDatabase(this@ItemCreateActivity)
             return@async db.itemDao().get(itemId)
@@ -63,12 +63,12 @@ class ItemCreateActivity : AppCompatActivity() {
     private fun saveItem(name: String, description: String) = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@ItemCreateActivity)
-            return@async db.itemDao().insertAll(listOf(Item(null, name, description, 0L)))
+            return@async db.itemDao().insertAll(listOf(Item(null, name, description, null)))
         }.await()
         backToHome()
     }
 
-    private fun updateItem(itemId: Int, name: String, description: String) = GlobalScope.launch(Dispatchers.Main) {
+    private fun updateItem(itemId: Long, name: String, description: String) = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@ItemCreateActivity)
             val item = db.itemDao().get(itemId)

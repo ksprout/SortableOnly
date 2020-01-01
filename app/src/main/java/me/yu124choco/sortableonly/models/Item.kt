@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity(tableName = "items")
 data class Item(
-    @PrimaryKey(autoGenerate = true) var id: Int?,
+    @PrimaryKey(autoGenerate = true) var id: Long?,
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "description") var description: String?,
     @ColumnInfo(name = "order_number") var orderNumber: Long?
@@ -13,7 +13,7 @@ data class Item(
 @Dao
 interface ItemDao {
     @Query("SELECT * FROM items WHERE id = :i")
-    fun get(i: Int): Item
+    fun get(i: Long): Item
 
     @Query("SELECT * FROM items")
     fun getAll(): List<Item>

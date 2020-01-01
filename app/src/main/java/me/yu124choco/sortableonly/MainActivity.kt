@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
     private fun insertTest() = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@MainActivity)
-            return@async db.itemDao().insertAll(List(5) { i -> Item(null, "アイテム$i", "本文", 0L) })
+            return@async db.itemDao().insertAll(List(5) { i -> Item(null, "アイテム$i", "本文", null) })
         }.await()
     }
 
