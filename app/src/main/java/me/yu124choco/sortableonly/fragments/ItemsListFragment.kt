@@ -2,8 +2,6 @@ package me.yu124choco.sortableonly.fragments
 
 import android.app.Activity
 import android.os.Bundle
-import android.os.Handler
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import me.yu124choco.sortableonly.MainActivity
 import me.yu124choco.sortableonly.R
 import me.yu124choco.sortableonly.adapters.ItemsListAdapter
 import me.yu124choco.sortableonly.database.AppDatabase
 import me.yu124choco.sortableonly.models.Item
-import me.yu124choco.sortableonly.util.makeShortToast
+import kotlin.math.max
+import kotlin.math.min
 
 class ItemsListFragment : Fragment() {
 
@@ -49,51 +47,71 @@ class ItemsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (activity != null) displayList(activity!!)
+        if (activity != null) setupList(activity!!)
+    }
+
+    private fun setupList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
+        val items = getAllItemsAsync(activity).await().toMutableList()
+
+        itemsListAdapter = ItemsListAdapter(activity, items) {item ->
+            if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
+        }
+        list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        list_view_items?.adapter = itemsListAdapter
+        list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+
+            private var fromPosition = -1
+            private var toPosition = -1
+            private var touchDowned = false
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                if (!touchDowned) {
+                    touchDowned = true
+                    fromPosition = viewHolder.adapterPosition
+                }
+                toPosition = target.adapterPosition
+                list_view_items?.adapter?.notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+            }
+
+            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+                super.onSelectedChanged(viewHolder, actionState)
+                if (viewHolder == null) {
+                    if (toPosition != fromPosition) {
+                        moveItem(activity, fromPosition, toPosition)
+                        touchDowned = false
+                        fromPosition = -1
+                        toPosition = -1
+                    }
+                }
+            }
+        })
+        if (list_view_items != null) itemTouchHelper.attachToRecyclerView(list_view_items)
     }
 
     /**
      * アイテム一覧のリストを表示する
      */
-    fun displayList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
-        val items = GlobalScope.async {
-            val db = AppDatabase.getDatabase(activity)
-            return@async db.itemDao().getAll()
-        }.await().toMutableList()
+    fun updateList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
+        val items = getAllItemsAsync(activity).await().toMutableList()
 
-        if (itemsListAdapter == null) {
-            itemsListAdapter = ItemsListAdapter(activity, items) {item ->
-                if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
-            }
-            list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-            list_view_items?.adapter = itemsListAdapter
-            list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        itemsListAdapter?.updateItemsList(items)
+        itemsListAdapter?.notifyDataSetChanged()
+    }
 
-            val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    val fromPosition = viewHolder.adapterPosition
-                    val toPosition = target.adapterPosition
-                    if (toPosition != fromPosition) {
-                        list_view_items?.adapter?.notifyItemMoved(fromPosition, toPosition)
-                        return true
-                    }
-                    return false
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-                }
-            })
-            if (list_view_items != null) itemTouchHelper.attachToRecyclerView(list_view_items)
-        } else {
-            itemsListAdapter?.updateItemsList(items)
-            itemsListAdapter?.notifyDataSetChanged()
-        }
+    private fun getAllItemsAsync(activity: Activity) = GlobalScope.async {
+        val db = AppDatabase.getDatabase(activity)
+        return@async db.itemDao().getAll()
     }
 
     fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
@@ -103,7 +121,7 @@ class ItemsListFragment : Fragment() {
                 val db = AppDatabase.getDatabase(activity)
                 return@async db.itemDao().deleteAll(targets.toList())
             }.await()
-            displayList(activity)
+            updateList(activity)
         }
     }
 
@@ -112,6 +130,33 @@ class ItemsListFragment : Fragment() {
             val db = AppDatabase.getDatabase(activity)
             return@async db.itemDao().deleteAll(listOf(item))
         }.await()
-        displayList(activity)
+        updateList(activity)
+    }
+
+    fun moveItem(activity: Activity, fromPos: Int, toPos: Int) = GlobalScope.launch(Dispatchers.Main) {
+        if (itemsListAdapter != null) {
+            val items = itemsListAdapter!!.items
+            val toOrder = items[toPos].orderNumber
+            GlobalScope.async {
+                items[fromPos].orderNumber = toOrder
+                if (fromPos < toPos) {
+                    for (i in (fromPos + 1)..toPos) {
+                        items[i].orderNumber += 1
+                    }
+                } else if (fromPos > toPos) {
+                    for (i in toPos..(fromPos - 1)) {
+                        items[i].orderNumber -= 1
+                    }
+                }
+                val targets = items.filterIndexed { i, _ ->
+                    i >= min(fromPos, toPos) && i <= max(fromPos, toPos)
+                }
+
+                val db = AppDatabase.getDatabase(activity)
+                return@async db.itemDao().updateAll(targets)
+
+            }.await()
+            updateList(activity)
+        }
     }
 }

@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             itemsListFragment?.arguments = bundle
             ft.replace(R.id.layout_inner, itemsListFragment!!).commit()
         } else {
-            itemsListFragment?.displayList(this)
+            itemsListFragment?.updateList(this)
         }
     }
 
