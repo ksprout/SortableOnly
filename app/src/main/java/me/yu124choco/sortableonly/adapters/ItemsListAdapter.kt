@@ -19,8 +19,6 @@ class ItemsListAdapter(private val context: Context, var items: MutableList<Item
         var textViewName: TextView = view.findViewById(R.id.text_view_name)
     }
 
-    val checkedItems: MutableList<Item> = mutableListOf()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.adapter_items_list, parent, false)
