@@ -63,7 +63,7 @@ class ItemCreateActivity : AppCompatActivity() {
     private fun saveItem(name: String, description: String) = GlobalScope.launch(Dispatchers.Main) {
         GlobalScope.async {
             val db = AppDatabase.getDatabase(this@ItemCreateActivity)
-            return@async db.itemDao().insertAll(listOf(Item(null, name, description, null)))
+            return@async db.itemDao().insertAll(listOf(Item(null, name, description, 0)))
         }.await()
         backToHome()
     }

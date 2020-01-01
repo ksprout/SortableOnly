@@ -1,14 +1,17 @@
 package me.yu124choco.sortableonly.models
 
+import androidx.annotation.NonNull
 import androidx.room.*
 
 @Entity(tableName = "items")
 data class Item(
     @PrimaryKey(autoGenerate = true) var id: Long?,
-    @ColumnInfo(name = "name") var name: String?,
-    @ColumnInfo(name = "description") var description: String?,
-    @ColumnInfo(name = "order_number") var orderNumber: Long?
-)
+    var name: String?,
+    var description: String?,
+    @ColumnInfo(name = "order_number", defaultValue = "0") @NonNull var orderNumber: Long
+) {
+    @Ignore var isChecked = false
+}
 
 @Dao
 interface ItemDao {

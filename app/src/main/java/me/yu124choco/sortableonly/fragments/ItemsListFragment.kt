@@ -98,7 +98,7 @@ class ItemsListFragment : Fragment() {
 
     fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
         if (itemsListAdapter != null) {
-            val targets = itemsListAdapter!!.checkedItems
+            val targets = itemsListAdapter!!.items.filter { it.isChecked }
             GlobalScope.async {
                 val db = AppDatabase.getDatabase(activity)
                 return@async db.itemDao().deleteAll(targets.toList())

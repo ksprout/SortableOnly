@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.yu124choco.sortableonly.R
 import me.yu124choco.sortableonly.models.Item
 
-class ItemsListAdapter(private val context: Context, private var items: MutableList<Item>, private val onItemClickListener: ((item: Item) -> Unit)) : RecyclerView.Adapter<ItemsListAdapter.ViewHolder>() {
+class ItemsListAdapter(private val context: Context, var items: MutableList<Item>, private val onItemClickListener: ((item: Item) -> Unit)) : RecyclerView.Adapter<ItemsListAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var itemContainer: ConstraintLayout = view.findViewById(R.id.item_container)
@@ -33,14 +32,11 @@ class ItemsListAdapter(private val context: Context, private var items: MutableL
             h.itemContainer.setOnClickListener {
                 onItemClickListener.invoke(items[position])
             }
-            h.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked && checkedItems.firstOrNull { it.id == items[position].id } == null) {
-                    checkedItems.add(items[position])
-                } else if (!isChecked) {
-                    checkedItems.removeAll { it.id == items[position].id }
-                }
+            h.checkBox.setOnCheckedChangeListener { _, isChecked ->
+                items[position].isChecked = isChecked
             }
             h.textViewName.text = items[position].name
+            h.checkBox.isChecked = items[position].isChecked
         }
     }
 
