@@ -61,34 +61,39 @@ class ItemsListFragment : Fragment() {
             return@async db.itemDao().getAll()
         }.await().toMutableList()
 
-        itemsListAdapter = ItemsListAdapter(activity, items) {item ->
-            if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
-        }
-        list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        list_view_items?.adapter = itemsListAdapter
-        list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        if (itemsListAdapter == null) {
+            itemsListAdapter = ItemsListAdapter(activity, items) {item ->
+                if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
+            }
+            list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+            list_view_items?.adapter = itemsListAdapter
+            list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 
-        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                val fromPosition = viewHolder.adapterPosition
-                val toPosition = target.adapterPosition
-                if (toPosition != fromPosition) {
-                    list_view_items?.adapter?.notifyItemMoved(fromPosition, toPosition)
-                    return true
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    val fromPosition = viewHolder.adapterPosition
+                    val toPosition = target.adapterPosition
+                    if (toPosition != fromPosition) {
+                        list_view_items?.adapter?.notifyItemMoved(fromPosition, toPosition)
+                        return true
+                    }
+                    return false
                 }
-                return false
-            }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
-            }
-        })
-        if (list_view_items != null) itemTouchHelper.attachToRecyclerView(list_view_items)
+                }
+            })
+            if (list_view_items != null) itemTouchHelper.attachToRecyclerView(list_view_items)
+        } else {
+            itemsListAdapter?.updateItemsList(items)
+            itemsListAdapter?.notifyDataSetChanged()
+        }
     }
 
     fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
