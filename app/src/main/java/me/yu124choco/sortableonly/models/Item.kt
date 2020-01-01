@@ -15,7 +15,7 @@ interface ItemDao {
     @Query("SELECT * FROM items WHERE id = :i")
     fun get(i: Long): Item
 
-    @Query("SELECT * FROM items")
+    @Query("SELECT * FROM items ORDER BY order_number DESC")
     fun getAll(): List<Item>
 
     @Query("SELECT MAX(order_number) FROM items")
