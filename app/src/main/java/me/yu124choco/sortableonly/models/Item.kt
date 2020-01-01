@@ -9,9 +9,7 @@ data class Item(
     var name: String?,
     var description: String?,
     @ColumnInfo(name = "order_number", defaultValue = "0") @NonNull var orderNumber: Long
-) {
-    @Ignore var isChecked = false
-}
+)
 
 @Dao
 interface ItemDao {

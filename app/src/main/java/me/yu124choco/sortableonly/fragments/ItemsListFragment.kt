@@ -105,8 +105,10 @@ class ItemsListFragment : Fragment() {
     fun updateList(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
         val items = getAllItemsAsync(activity).await().toMutableList()
 
-        itemsListAdapter?.updateItemsList(items)
-        itemsListAdapter?.notifyDataSetChanged()
+        itemsListAdapter?.let {
+            it.updateItemsList(items)
+            it.notifyDataSetChanged()
+        }
     }
 
     private fun getAllItemsAsync(activity: Activity) = GlobalScope.async {
@@ -116,7 +118,7 @@ class ItemsListFragment : Fragment() {
 
     fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
         if (itemsListAdapter != null) {
-            val targets = itemsListAdapter!!.items.filter { it.isChecked }
+            val targets = itemsListAdapter!!.items.filter { itemsListAdapter!!.checkedItemIds.contains(it.id) }
             GlobalScope.async {
                 val db = AppDatabase.getDatabase(activity)
                 return@async db.itemDao().deleteAll(targets.toList())

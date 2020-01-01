@@ -13,6 +13,8 @@ import me.yu124choco.sortableonly.models.Item
 
 class ItemsListAdapter(private val context: Context, var items: MutableList<Item>, private val onItemClickListener: ((item: Item) -> Unit)) : RecyclerView.Adapter<ItemsListAdapter.ViewHolder>() {
 
+    val checkedItemIds = mutableSetOf<Long>()
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var itemContainer: ConstraintLayout = view.findViewById(R.id.item_container)
         var checkBox: CheckBox = view.findViewById(R.id.item_check_box)
@@ -31,10 +33,19 @@ class ItemsListAdapter(private val context: Context, var items: MutableList<Item
                 onItemClickListener.invoke(items[position])
             }
             h.checkBox.setOnCheckedChangeListener { _, isChecked ->
-                items[position].isChecked = isChecked
+                val itemId = items[position].id
+                if (itemId != null) {
+                    if (isChecked) {
+                        checkedItemIds.add(itemId)
+                    } else {
+                        checkedItemIds.remove(itemId)
+                    }
+                }
             }
             h.textViewName.text = items[position].name
-            h.checkBox.isChecked = items[position].isChecked
+            items[position].id?.let {
+                h.checkBox.isChecked = checkedItemIds.contains(it)
+            }
         }
     }
 
