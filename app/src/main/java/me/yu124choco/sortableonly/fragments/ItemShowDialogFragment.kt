@@ -21,23 +21,18 @@ class ItemShowDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = Dialog(activity as Context)
-        dialog.window?.requestFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
-        dialog.window?.setContentView(R.layout.fragment_item_show_dialog)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val textViewName = dialog.findViewById<TextView>(R.id.text_view_name)
-        val textViewDescription = dialog.findViewById<TextView>(R.id.text_view_description)
-        val imageViewEdit = dialog.findViewById<ImageView>(R.id.image_view_edit_button)
-        val imageViewDelete = dialog.findViewById<ImageView>(R.id.image_view_delete_button)
-
-        textViewName.text = item?.name
-        textViewDescription.text = item?.description
-        imageViewEdit.setOnClickListener {
-            if (item != null) editButtonClickListener?.invoke(item!!)
+        dialog.window?.let {
+            it.requestFeature(Window.FEATURE_NO_TITLE)
+            it.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+            it.setContentView(R.layout.fragment_item_show_dialog)
+            it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-        imageViewDelete.setOnClickListener {
-            if (item != null) deleteButtonClickListener?.invoke(item!!)
+
+        item?.let { item ->
+            dialog.findViewById<TextView>(R.id.text_view_name).text = item.name
+            dialog.findViewById<TextView>(R.id.text_view_description).text = item.description
+            dialog.findViewById<ImageView>(R.id.image_view_edit_button).setOnClickListener { editButtonClickListener?.invoke(item) }
+            dialog.findViewById<ImageView>(R.id.image_view_delete_button).setOnClickListener { deleteButtonClickListener?.invoke(item) }
         }
 
         return dialog

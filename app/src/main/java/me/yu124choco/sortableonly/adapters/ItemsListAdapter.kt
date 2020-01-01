@@ -28,25 +28,20 @@ class ItemsListAdapter(private val context: Context, var items: MutableList<Item
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.let { h ->
+        holder.let { h -> items[position].id?.let { itemId ->
             h.itemContainer.setOnClickListener {
                 onItemClickListener.invoke(items[position])
             }
             h.checkBox.setOnCheckedChangeListener { _, isChecked ->
-                val itemId = items[position].id
-                if (itemId != null) {
-                    if (isChecked) {
-                        checkedItemIds.add(itemId)
-                    } else {
-                        checkedItemIds.remove(itemId)
-                    }
+                if (isChecked) {
+                    checkedItemIds.add(itemId)
+                } else {
+                    checkedItemIds.remove(itemId)
                 }
             }
             h.textViewName.text = items[position].name
-            items[position].id?.let {
-                h.checkBox.isChecked = checkedItemIds.contains(it)
-            }
-        }
+            h.checkBox.isChecked = checkedItemIds.contains(itemId)
+        } }
     }
 
     override fun getItemCount(): Int = items.size

@@ -56,9 +56,6 @@ class ItemsListFragment : Fragment() {
         itemsListAdapter = ItemsListAdapter(activity, items) {item ->
             if (onItemsListElemClickListener != null) onItemsListElemClickListener?.invoke(item)
         }
-        list_view_items?.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        list_view_items?.adapter = itemsListAdapter
-        list_view_items?.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
 
@@ -96,7 +93,12 @@ class ItemsListFragment : Fragment() {
                 }
             }
         })
-        if (list_view_items != null) itemTouchHelper.attachToRecyclerView(list_view_items)
+        list_view_items?.let {
+            it.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+            it.adapter = itemsListAdapter
+            it.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+            itemTouchHelper.attachToRecyclerView(it)
+        }
     }
 
     /**
@@ -117,8 +119,8 @@ class ItemsListFragment : Fragment() {
     }
 
     fun deleteTargetItems(activity: Activity) = GlobalScope.launch(Dispatchers.Main) {
-        if (itemsListAdapter != null) {
-            val targets = itemsListAdapter!!.items.filter { itemsListAdapter!!.checkedItemIds.contains(it.id) }
+        itemsListAdapter?.let {
+            val targets = it.items.filter { item -> it.checkedItemIds.contains(item.id) }
             GlobalScope.async {
                 val db = AppDatabase.getDatabase(activity)
                 return@async db.itemDao().deleteAll(targets.toList())
@@ -136,8 +138,8 @@ class ItemsListFragment : Fragment() {
     }
 
     fun moveItem(activity: Activity, fromPos: Int, toPos: Int) = GlobalScope.launch(Dispatchers.Main) {
-        if (itemsListAdapter != null) {
-            val items = itemsListAdapter!!.items
+        itemsListAdapter?.let {
+            val items = it.items
             val toOrder = items[toPos].orderNumber
             GlobalScope.async {
                 items[fromPos].orderNumber = toOrder
