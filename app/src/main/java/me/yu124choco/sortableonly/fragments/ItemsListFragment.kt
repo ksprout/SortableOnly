@@ -63,11 +63,7 @@ class ItemsListFragment : Fragment() {
             private var toPosition = -1
             private var touchDowned = false
 
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 if (!touchDowned) {
                     touchDowned = true
                     fromPosition = viewHolder.adapterPosition
@@ -83,12 +79,16 @@ class ItemsListFragment : Fragment() {
 
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
                 super.onSelectedChanged(viewHolder, actionState)
-                if (viewHolder == null) {
-                    if (toPosition != fromPosition) {
-                        moveItem(activity, fromPosition, toPosition)
-                        touchDowned = false
-                        fromPosition = -1
-                        toPosition = -1
+                itemsListAdapter?.let {
+                    if (viewHolder == null) {
+                        if (toPosition != fromPosition) {
+                            moveItem(activity, fromPosition, toPosition)
+                            touchDowned = false
+                            fromPosition = -1
+                            toPosition = -1
+                        }
+                    } else if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                        (viewHolder.itemView as ViewGroup).getChildAt(0).setBackgroundColor(it.backgroundGray)
                     }
                 }
             }

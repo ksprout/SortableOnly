@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import me.yu124choco.sortableonly.R
 import me.yu124choco.sortableonly.models.Item
@@ -14,6 +15,8 @@ import me.yu124choco.sortableonly.models.Item
 class ItemsListAdapter(private val context: Context, var items: MutableList<Item>, private val onItemClickListener: ((item: Item) -> Unit)) : RecyclerView.Adapter<ItemsListAdapter.ViewHolder>() {
 
     val checkedItemIds = mutableSetOf<Long>()
+    private  val backgroundWhite = ContextCompat.getColor(context, R.color.colorWhite)
+    val backgroundGray = ContextCompat.getColor(context, R.color.itemsListItemBackgroundGray)
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var itemContainer: ConstraintLayout = view.findViewById(R.id.item_container)
@@ -29,6 +32,7 @@ class ItemsListAdapter(private val context: Context, var items: MutableList<Item
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.let { h -> items[position].id?.let { itemId ->
+            h.itemContainer.setBackgroundColor(backgroundWhite)
             h.itemContainer.setOnClickListener {
                 onItemClickListener.invoke(items[position])
             }
