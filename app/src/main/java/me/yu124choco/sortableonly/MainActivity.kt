@@ -56,19 +56,20 @@ class MainActivity : AppCompatActivity() {
 
         itemsListFragment?.updateList(this) ?: ItemsListFragment().run {
             onItemsListElemClickListener = { item ->
-                val dialog = ItemShowDialogFragment()
-                dialog.item = item
-                dialog.editButtonClickListener = { i ->
-                    dialog.dismiss()
-                    val intent = Intent(application, ItemCreateActivity::class.java)
-                    intent.putExtra("target_item_id", i.id)
-                    startActivityForResult(intent, RESULT_ITEM_CREATE)
+                ItemShowDialogFragment().run {
+                    this.item = item
+                    editButtonClickListener = { i ->
+                        dismiss()
+                        val intent = Intent(application, ItemCreateActivity::class.java)
+                        intent.putExtra("target_item_id", i.id)
+                        startActivityForResult(intent, RESULT_ITEM_CREATE)
+                    }
+                    deleteButtonClickListener = { i ->
+                        dismiss()
+                        deleteItem(this@MainActivity, i)
+                    }
+                    show(supportFragmentManager, "item_show_dialog")
                 }
-                dialog.deleteButtonClickListener = { i ->
-                    dialog.dismiss()
-                    deleteItem(this@MainActivity, i)
-                }
-                dialog.show(supportFragmentManager, "item_show_dialog")
             }
             arguments = bundle
             ft.replace(R.id.layout_inner, this).commit()
