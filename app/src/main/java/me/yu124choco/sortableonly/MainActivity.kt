@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity() {
         val ft = supportFragmentManager.beginTransaction()
         val bundle = Bundle()
         bundle.putString("order_rule", ItemsListFragment.ORDER_BY_CUSTOM)
-        if (itemsListFragment == null) {
-            itemsListFragment = ItemsListFragment()
-            itemsListFragment?.onItemsListElemClickListener = { item ->
+
+        itemsListFragment?.updateList(this) ?: ItemsListFragment().run {
+            onItemsListElemClickListener = { item ->
                 val dialog = ItemShowDialogFragment()
                 dialog.item = item
                 dialog.editButtonClickListener = { i ->
@@ -66,14 +66,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 dialog.deleteButtonClickListener = { i ->
                     dialog.dismiss()
-                    itemsListFragment?.deleteItem(this, i)
+                    deleteItem(this@MainActivity, i)
                 }
                 dialog.show(supportFragmentManager, "item_show_dialog")
             }
-            itemsListFragment?.arguments = bundle
-            ft.replace(R.id.layout_inner, itemsListFragment!!).commit()
-        } else {
-            itemsListFragment?.updateList(this)
+            arguments = bundle
+            ft.replace(R.id.layout_inner, this).commit()
+            itemsListFragment = this
         }
     }
 
